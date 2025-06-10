@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Portal - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            animation: slideDown 1s ease-out;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            background: #1e3c72;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: scaleIn 0.5s ease-out backwards;
+        }
+
+        .button:nth-child(1) { animation-delay: 0.2s; }
+        .button:nth-child(2) { animation-delay: 0.4s; }
+        .button:nth-child(3) { animation-delay: 0.6s; }
+        .button:nth-child(4) { animation-delay: 0.8s; }
+
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #2a5298;
+        }
+
+        .welcome-icon {
+            font-size: 4em;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .button {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-icon">🧑🏻‍⚕️</div>
+        <h1>Welcome to Healthcare Portal</h1>
+        <div class="buttons-grid">
+            <button class="button" onclick="navigate('doc-L-R-V.html')">Doctor Registration</button>
+            <button class="button" onclick="navigate('doc-L-R-V.html')">Doctor Login</button>
+            <button class="button" onclick="navigate('opd.html')">OPD</button>
+            <button class="button" onclick="navigate('pat-reg.html')">Patient Registration</button>
+        </div>
+    </div>
+
+    <script>
+          function navigate(page) {
+        window.location.href = page;
+    }
+        // function navigate(page) {
+        //     // Add your navigation logic here
+        //     console.log(`Navigating to ${page}`);
+        //     // Example: window.location.href = `/${page}.html`;
+        // }
+
+        // Add entrance animation when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transition = 'opacity 1s ease-in';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

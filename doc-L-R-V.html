@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+            display: none;
+        }
+
+        .login-container {
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-align: center;
+            animation: slideDown 1s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e3c72;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1e3c72;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+            animation: scaleIn 0.5s ease-out backwards;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #2a5298;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #1e3c72;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+            color: #1e3c72;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .patient-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .patient-table th,
+        .patient-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .patient-table th {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .patient-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .admit-btn {
+            padding: 8px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .admit-btn:hover {
+            background: #45a049;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .patient-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="container login-container" id="loginContainer" style="display: block;">
+        <h1>Doctor Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" required>
+                <div class="error" id="loginEmailError">Please enter a valid email</div>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" required>
+                <div class="error" id="loginPasswordError">Please enter your password</div>
+            </div>
+            <div class="forgot-password" id="forgotPassword">Forgot Password?</div>
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+        <p class="switch-form" id="switchToRegister">New doctor? Register here</p>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="container login-container" id="registerContainer">
+        <h1>Doctor Registration</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="kgId">KG ID*</label>
+                <input type="text" id="kgId" required>
+                <div class="error" id="kgIdError">Please enter a valid KG ID</div>
+            </div>
+            <div class="form-group">
+                <label for="certificateId">MBBS Certificate ID*</label>
+                <input type="text" id="certificateId" required>
+                <div class="error" id="certificateIdError">Please enter a valid Certificate ID</div>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Full Name*</label>
+                <input type="text" id="fullName" required>
+                <div class="error" id="fullNameError">Please enter your full name</div>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email*</label>
+                <input type="email" id="regEmail" required>
+                <div class="error" id="regEmailError">Please enter a valid email</div>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password*</label>
+                <input type="password" id="regPassword" required>
+                <div class="error" id="regPasswordError">Please enter a password</div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number*</label>
+                <input type="tel" id="phone" required>
+                <div class="error" id="phoneError">Please enter a valid 10-digit phone number</div>
+            </div>
+            <div class="form-group">
+                <label for="phcName">PHC Name*</label>
+                <select id="phcName" required>
+                    <option value="">Select PHC</option>
+                    <optgroup label="Shivamogga District">
+                        <option value="taluk1">Taluk 1</option>
+                        <option value="taluk2">Taluk 2</option>
+                        <option value="taluk3">Taluk 3</option>
+                    </optgroup>
+                </select>
+                <div class="error" id="phcNameError">Please select a PHC</div>
+            </div>
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
+        <p class="switch-form" id="switchToLogin">Already registered? Login here</p>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="container" id="dashboardContainer">
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <h1>Welcome, <span id="doctorName"></span></h1>
+        <table class="patient-table">
+            <thead>
+                <tr>
+                    <th>SI. No</th>
+                    <th>OPD Number</th>
+                    <th>Patient Name</th>
+                    <th>Address</th>
+                    <th>Age</th>
+                    <th>Sex</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="patientQueue"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Simulated database
+        const doctors = [
+            { name: 'Dr. John Smith', email: 'john@example.com', password: 'password123' }
+        ];
+
+        const patientQueue = [
+            { id: 1, opdNumber: 'OPD001', name: 'Rayyan', address: 'Gopala, Shivamoga', age: 26, sex: 'Male' },
+            { id: 2, opdNumber: 'OPD002', name: 'Divya', address: 'Vinob Nagar, Shivamoga', age: 23, sex: 'Female' }
+        ];
+
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const doctorName = document.getElementById('doctorName');
+
+        // Form switching
+        switchToRegister.addEventListener('click', () => {
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'block';
+        });
+
+        switchToLogin.addEventListener('click', () => {
+            registerContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+        });
+
+        forgotPassword.addEventListener('click', () => {
+            alert('Password reset link will be sent to your email');
+        });
+
+        // Login handling
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const doctor = doctors.find(d => d.email === email && d.password === password);
+            if (doctor) {
+                showDashboard(doctor);
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+
+        // Registration handling
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateRegistration()) {
+                const newDoctor = {
+                    name: document.getElementById('fullName').value,
+                    email: document.getElementById('regEmail').value,
+                    password: document.getElementById('regPassword').value
+                };
+                doctors.push(newDoctor);
+                alert('Registration successful! Please login.');
+                registerForm.reset();
+                switchToLogin.click();
+            }
+        });
+
+        // Validation
+        function validateRegistration() {
+            let isValid = true;
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+
+            const phoneRegex = /^\d{10}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!phoneRegex.test(document.getElementById('phone').value)) {
+                document.getElementById('phoneError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!emailRegex.test(document.getElementById('regEmail').value)) {
+                document.getElementById('regEmailError').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Dashboard
+        function showDashboard(doctor) {
+            loginContainer.style.display = 'none';
+            dashboardContainer.style.display = 'block';
+            doctorName.textContent = doctor.name;
+            updatePatientQueue();
+        }
+
+        function updatePatientQueue() {
+            const patientQueueTable = document.getElementById('patientQueue');
+            patientQueueTable.innerHTML = patientQueue.map(patient => `
+                <tr>
+                    <td>${patient.id}</td>
+                    <td>${patient.opdNumber}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.address}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.sex}</td>
+                    <td><button class="admit-btn" onclick="admitPatient('${patient.opdNumber}')">Admit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function admitPatient(opdNumber) {
+        // Redirect to pat-det-3.html with the OPD number as a query parameter
+        window.location.href = `pat-det-3.html?opdNumber=${opdNumber}`;
+    }
+
+        // function admitPatient(opdNumber) {
+        //     const patient = patientQueue.find(p => p.opdNumber === opdNumber);
+        //     if (patient) {
+        //         alert(`Viewing details for patient: ${patient.name}`);
+        //     }
+        // }
+
+        logoutBtn.addEventListener('click', () => {
+            dashboardContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            loginForm.reset();
+        });
+    </script>
+</body>
+</html>

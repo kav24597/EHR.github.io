@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!DOCTYPE html>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Arial', sans-serif;
+            }
+    
+            body {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+    
+            .container {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                max-width: 800px;
+                width: 100%;
+                animation: fadeIn 1s ease-out;
+            }
+    
+            h1 {
+                color: #1e3c72;
+                margin-bottom: 30px;
+                font-size: 2em;
+                text-align: center;
+                animation: slideDown 1s ease-out;
+            }
+    
+            .history-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                animation: slideUp 0.5s ease-out backwards;
+            }
+    
+            .history-table th,
+            .history-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+    
+            .history-table th {
+                background-color: #1e3c72;
+                color: white;
+                font-weight: bold;
+            }
+    
+            .history-table tr:hover {
+                background-color: rgba(42, 82, 152, 0.1);
+            }
+    
+            .view-link {
+                color: #1e3c72;
+                text-decoration: none;
+                font-weight: bold;
+                transition: color 0.3s;
+            }
+    
+            .view-link:hover {
+                color: #2a5298;
+                text-decoration: underline;
+            }
+    
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+    
+            .modal-content {
+                background-color: white;
+                border-radius: 20px;
+                padding: 30px;
+                width: 90%;
+                max-width: 600px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                animation: scaleIn 0.3s ease-out;
+            }
+    
+            .close-modal {
+                position: absolute;
+                right: 20px;
+                top: 15px;
+                font-size: 24px;
+                cursor: pointer;
+                color: #1e3c72;
+            }
+    
+            .next-btn {
+                padding: 12px 24px;
+                background: #1e3c72;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                float: right;
+                transition: background-color 0.3s;
+            }
+    
+            .next-btn:hover {
+                background: #2a5298;
+            }
+    
+            @media (max-width: 600px) {
+                .container {
+                    padding: 20px;
+                }
+    
+                .history-table {
+                    display: block;
+                    overflow-x: auto;
+                }
+    
+                .history-table th,
+                .history-table td {
+                    padding: 8px;
+                    font-size: 0.9em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Patient History</h1>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>SI. No</th>
+                        <th>Date of Previous Visit</th>
+                        <th>Hospital/PHC Name</th>
+                        <th>Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>10/11/2024</td>
+                        <td>MC Gann, Hospital</td>
+                        <td><a href="#" class="view-link" data-visit-id="1">View Details</a></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>15/01/2025</td>
+                        <td>Community, PHC</td>
+                        <td><a href="#" class="view-link" data-visit-id="2">View Details</a></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>20/02/2025</td>
+                        <td>Medical Center</td>
+                        <td><a href="#" class="view-link" data-visit-id="3">View Details</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="next-btn" onclick="goToNextPage()">Next</button>
+        </div>
+    
+        <div class="modal" id="visitModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 style="color: #1e3c72; margin-bottom: 20px;">Visit Details</h2>
+                <div id="visitDetails"></div>
+            </div>
+        </div>
+    
+        <script>
+            // Sample visit data (in real application, this would come from a database)
+            const visitData = {
+                1: {
+                    observations: "Patient presented with mild fever and cough. Temperature: 38.2°C",
+                    prescriptions: "- Paracetamol 500mg\n- Cough syrup 10ml thrice daily"
+                },
+                2: {
+                    observations: "Follow-up visit. Symptoms improved. Temperature normal.",
+                    prescriptions: "- Complete remaining course of medication"
+                },
+                3: {
+                    observations: "Regular checkup. All vitals normal.",
+                    prescriptions: "- Vitamin D supplements\n- Regular exercise recommended"
+                }
+            };
+    
+            // Modal functionality
+            const modal = document.getElementById('visitModal');
+            const visitDetails = document.getElementById('visitDetails');
+            const closeModal = document.querySelector('.close-modal');
+            const viewLinks = document.querySelectorAll('.view-link');
+            const nextBtn = document.querySelector('.next-btn');
+    
+            viewLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const visitId = link.getAttribute('data-visit-id');
+                    const data = visitData[visitId];
+                    
+                    visitDetails.innerHTML = `
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="color: #1e3c72; margin-bottom: 10px;">Observations</h3>
+                            <p>${data.observations}</p>
+                        </div>
+                        <div>
+                            <h3 style="color: #1e3c72; margin-bottom: 10px;">Prescriptions</h3>
+                            <pre style="white-space: pre-wrap;">${data.prescriptions}</pre>
+                        </div>
+                    `;
+                    
+                    modal.style.display = 'block';
+                });
+            });
+    
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+    
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+    
+            // nextBtn.addEventListener('click', () => {
+            //     // Replace with actual redirect URL
+            //     window.location.href = '/observation-prescription';
+            // });
+            function goToNextPage() {
+        window.location.href = 'op.html';
+    }
+        </script>
+    </body>
+    </html>

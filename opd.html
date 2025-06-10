@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPD Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-align: center;
+            animation: slideDown 1s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e3c72;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1e3c72;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+            animation: scaleIn 0.5s ease-out backwards;
+            animation-delay: 0.6s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #2a5298;
+        }
+
+        .patient-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .patient-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: left;
+            display: none;
+        }
+
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OPD Registration</h1>
+        <form id="opdForm">
+            <div class="form-group">
+                <label for="patientId">Patient ID *</label>
+                <input type="text" id="patientId" required>
+                <div class="error" id="patientIdError">Please enter a valid Patient ID</div>
+            </div>
+
+            <div class="patient-details" id="patientDetails">
+                <img src="/api/placeholder/120/120" alt="Patient Photo" class="patient-photo" id="patientPhoto">
+                <div class="patient-info">
+                    <div>
+                        <strong>Name:</strong>
+                        <p id="patientName"></p>
+                    </div>
+                    <div>
+                        <strong>Age:</strong>
+                        <p id="patientAge"></p>
+                    </div>
+                    <div>
+                        <strong>Sex:</strong>
+                        <p id="patientSex"></p>
+                    </div>
+                    <div>
+                        <strong>Address:</strong>
+                        <p id="patientAddress"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Select Department *</label>
+                <select id="department" required>
+                    <option value="">Select Department</option>
+                    <option value="cardiology">Cardiology</option>
+                    <option value="orthopedics">Orthopedics</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="pediatrics">Pediatrics</option>
+                    <option value="gynecology">Gynecology</option>
+                    <option value="dermatology">Dermatology</option>
+                    <option value="ophthalmology">Ophthalmology</option>
+                    <option value="ent">ENT</option>
+                </select>
+                <div class="error" id="departmentError">Please select a department</div>
+            </div>
+
+            <button type="submit" class="submit-btn">Generate OPD Number</button>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <h2>Registration Successful!</h2>
+            <p>OPD Number: <strong id="opdNumber"></strong></p>
+            <p>Time Slot: <strong id="timeSlot"></strong></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('opdForm');
+            const patientIdInput = document.getElementById('patientId');
+            const patientDetails = document.getElementById('patientDetails');
+            const successMessage = document.getElementById('successMessage');
+
+            // Simulate database of patient records
+            const patientDatabase = {
+                'PAT123456': {
+                    name: 'Rayyan',
+                    age: 26,
+                    sex: 'Male',
+                    address: 'Gopala, Shivamoga',
+                    photo: 'rayyan.png'
+                },
+                'PAT789012': {
+                    name: 'Jane Smith',
+                    age: 28,
+                    sex: 'Female',
+                    address: '456 Park Ave, Town',
+                    photo: '/api/placeholder/120/120'
+                }
+            };
+
+            // Patient ID lookup
+            patientIdInput.addEventListener('blur', function() {
+                const patientId = this.value.trim().toUpperCase();
+                const patient = patientDatabase[patientId];
+
+                if (patient) {
+                    document.getElementById('patientName').textContent = patient.name;
+                    document.getElementById('patientAge').textContent = patient.age;
+                    document.getElementById('patientSex').textContent = patient.sex;
+                    document.getElementById('patientAddress').textContent = patient.address;
+                    document.getElementById('patientPhoto').src = patient.photo;
+                    patientDetails.style.display = 'block';
+                    document.getElementById('patientIdError').style.display = 'none';
+                } else {
+                    patientDetails.style.display = 'none';
+                    document.getElementById('patientIdError').style.display = 'block';
+                }
+            });
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const patientId = patientIdInput.value.trim().toUpperCase();
+                const department = document.getElementById('department').value;
+                
+                if (!patientDatabase[patientId]) {
+                    document.getElementById('patientIdError').style.display = 'block';
+                    return;
+                }
+                
+                if (!department) {
+                    document.getElementById('departmentError').style.display = 'block';
+                    return;
+                }
+
+                // Generate OPD number and time slot
+                const opdNumber = 'OPD' + Date.now().toString().slice(-6);
+                const currentTime = new Date();
+                const timeSlot = new Date(currentTime.getTime() + 30*60000); // 30 minutes from now
+
+                document.getElementById('opdNumber').textContent = opdNumber;
+                document.getElementById('timeSlot').textContent = timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                successMessage.style.display = 'block';
+                form.reset();
+                patientDetails.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

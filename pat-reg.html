@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-align: center;
+            animation: slideDown 1s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e3c72;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1e3c72;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+            animation: scaleIn 0.5s ease-out backwards;
+            animation-delay: 0.6s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #2a5298;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: left;
+            display: none;
+        }
+
+        .otp-section {
+            display: none;
+        }
+
+        .verify-btn {
+            width: auto;
+            padding: 8px 20px;
+            margin-left: 10px;
+            background: #2a5298;
+        }
+
+        .phone-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #photoPreview {
+            max-width: 150px;
+            max-height: 150px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Patient Registration</h1>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="fullName">Full Name *</label>
+                <input type="text" id="fullName" required>
+                <div class="error" id="fullNameError">Please enter your full name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth *</label>
+                <input type="date" id="dob" required>
+                <div class="error" id="dobError">Please enter a valid date of birth</div>
+            </div>
+
+            <div class="form-group">
+                <label for="dobProof">DOB Proof *</label>
+                <input type="file" id="dobProof" accept=".pdf,.jpg,.jpeg,.png" required>
+                <div class="error" id="dobProofError">Please upload DOB proof</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <div class="phone-input-container">
+                    <input type="tel" id="phone" pattern="[0-9]{10}" required>
+                    <button type="button" class="submit-btn verify-btn" id="sendOtp">Send OTP</button>
+                </div>
+                <div class="error" id="phoneError">Please enter a valid 10-digit phone number</div>
+            </div>
+
+            <div class="form-group otp-section" id="otpSection">
+                <label for="otp">Enter OTP *</label>
+                <div class="phone-input-container">
+                    <input type="text" id="otp" pattern="[0-9]{6}" maxlength="6">
+                    <button type="button" class="submit-btn verify-btn" id="verifyOtp">Verify</button>
+                </div>
+                <div class="error" id="otpError">Please enter a valid OTP</div>
+            </div>
+
+            <div class="form-group">
+                <label for="sex">Sex *</label>
+                <select id="sex" required>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="error" id="sexError">Please select your sex</div>
+            </div>
+
+            <div class="form-group">
+                <label for="parentName">Father/Mother Name</label>
+                <input type="text" id="parentName">
+            </div>
+
+            <div class="form-group">
+                <label for="spouseName">Husband/Wife Name</label>
+                <input type="text" id="spouseName">
+            </div>
+
+            <div class="form-group">
+                <label for="panCard">PAN Card Number *</label>
+                <input type="text" id="panCard" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required>
+                <div class="error" id="panCardError">Please enter a valid PAN card number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="aadhar">Aadhar Card Number *</label>
+                <input type="text" id="aadhar" pattern="[0-9]{12}" required>
+                <div class="error" id="aadharError">Please enter a valid 12-digit Aadhar number</div>
+            </div>
+
+            <div class="form-group">
+                <label for="rationCard">Ration Card Number (For BPL patients)</label>
+                <input type="text" id="rationCard">
+            </div>
+
+            <div class="form-group">
+                <label for="photo">Passport-size Photo *</label>
+                <video id="camera" style="display: none; width: 100%; max-width: 300px; margin-top: 10px;"></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <img id="photoPreview" alt="Preview">
+                <button type="button" class="submit-btn verify-btn" id="captureBtn">Open Camera</button>
+                <button type="button" class="submit-btn verify-btn" id="snapBtn" style="display: none;">Take Photo</button>
+                <div class="error" id="photoError">Please capture a passport-size photo</div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registrationForm');
+            const sendOtpBtn = document.getElementById('sendOtp');
+            const verifyOtpBtn = document.getElementById('verifyOtp');
+            const otpSection = document.getElementById('otpSection');
+            const photoPreview = document.getElementById('photoPreview');
+            const captureBtn = document.getElementById('captureBtn');
+            const snapBtn = document.getElementById('snapBtn');
+            const video = document.getElementById('camera');
+            const canvas = document.getElementById('canvas');
+            let isOtpVerified = false;
+            let stream = null;
+
+            // Camera functionality
+            captureBtn.addEventListener('click', async function() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 300 },
+                            height: { ideal: 300 }
+                        }
+                    });
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    snapBtn.style.display = 'inline-block';
+                    captureBtn.style.display = 'none';
+                    video.play();
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    alert('Error accessing camera. Please make sure you have granted camera permissions.');
+                }
+            });
+
+            snapBtn.addEventListener('click', function() {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                
+                // Convert canvas to image
+                photoPreview.src = canvas.toDataURL('image/jpeg');
+                photoPreview.style.display = 'block';
+                
+                // Stop camera stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Hide video and show capture button again
+                video.style.display = 'none';
+                snapBtn.style.display = 'none';
+                captureBtn.style.display = 'inline-block';
+            });
+
+
+
+            // Phone number and OTP validation
+            sendOtpBtn.addEventListener('click', function() {
+                const phone = document.getElementById('phone').value;
+                if (phone.match(/^[0-9]{10}$/)) {
+                    // Simulate OTP sending
+                    alert('OTP sent to ' + phone);
+                    otpSection.style.display = 'block';
+                } else {
+                    document.getElementById('phoneError').style.display = 'block';
+                }
+            });
+
+            verifyOtpBtn.addEventListener('click', function() {
+                const otp = document.getElementById('otp').value;
+                if (otp.match(/^[0-9]{6}$/)) {
+                    // Simulate OTP verification
+                    alert('OTP verified successfully');
+                    isOtpVerified = true;
+                    document.getElementById('otpError').style.display = 'none';
+                } else {
+                    document.getElementById('otpError').style.display = 'block';
+                }
+            });
+
+            // Photo preview
+            photoInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        photoPreview.src = e.target.result;
+                        photoPreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate OTP verification
+                if (!isOtpVerified) {
+                    alert('Please verify your phone number with OTP');
+                    return;
+                }
+
+                // Validate all required fields
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                requiredFields.forEach(field => {
+                    if (!field.value) {
+                        isValid = false;
+                        document.getElementById(field.id + 'Error').style.display = 'block';
+                    } else {
+                        document.getElementById(field.id + 'Error').style.display = 'none';
+                    }
+                });
+
+                if (isValid) {
+                    // Generate unique patient ID (simple example)
+                    const patientId = 'PAT' + Date.now().toString().slice(-6);
+                    alert(`Registration successful!\nYour Patient ID: ${patientId}\nAn SMS has been sent to your registered mobile number.`);
+                    form.reset();
+                    photoPreview.style.display = 'none';
+                    otpSection.style.display = 'none';
+                    isOtpVerified = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

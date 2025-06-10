@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Arial', sans-serif;
+            }
+    
+            body {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+    
+            .container {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                max-width: 1000px;
+                width: 100%;
+                animation: fadeIn 1s ease-out;
+            }
+    
+            .doctor-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #e0e0e0;
+            }
+    
+            .doctor-details {
+                flex: 1;
+            }
+    
+            .doctor-details h2 {
+                color: #1e3c72;
+                margin-bottom: 10px;
+            }
+    
+            .doctor-details p {
+                color: #666;
+                margin: 5px 0;
+            }
+    
+            .history-btn {
+                padding: 12px 24px;
+                background: #1e3c72;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+    
+            .history-btn:hover {
+                background: #2a5298;
+            }
+    
+            .section {
+                margin-bottom: 30px;
+            }
+    
+            .section-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+    
+            .section-title {
+                color: #1e3c72;
+                margin-right: 15px;
+            }
+    
+            .mic-btn {
+                background: #1e3c72;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+    
+            .mic-btn:hover {
+                background: #2a5298;
+            }
+    
+            .mic-btn.recording {
+                background: #ff4444;
+                animation: pulse 1.5s infinite;
+            }
+    
+            .observation-textarea {
+                width: 100%;
+                min-height: 150px;
+                padding: 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                resize: vertical;
+                font-size: 1em;
+                transition: border-color 0.3s;
+            }
+    
+            .observation-textarea:focus {
+                outline: none;
+                border-color: #1e3c72;
+            }
+    
+            .prescription-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+    
+            .prescription-table th,
+            .prescription-table td {
+                padding: 12px;
+                text-align: left;
+                border: 1px solid #e0e0e0;
+            }
+    
+            .prescription-table th {
+                background-color: #1e3c72;
+                color: white;
+            }
+    
+            .prescription-table tr:nth-child(even) {
+                background-color: rgba(42, 82, 152, 0.05);
+            }
+    
+            .add-row-btn {
+                margin-top: 15px;
+                padding: 8px 16px;
+                background: #1e3c72;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .save-btn {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .save-btn:hover {
+            background: #2a5298;
+        }
+
+        /* Add loading spinner style */
+        .loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+    
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+    
+            @media (max-width: 768px) {
+                .container {
+                    padding: 20px;
+                }
+    
+                .doctor-info {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 15px;
+                }
+    
+                .prescription-table {
+                    display: block;
+                    overflow-x: auto;
+                }
+    
+                .prescription-table th,
+                .prescription-table td {
+                    padding: 8px;
+                    font-size: 0.9em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="doctor-info">
+                <div class="doctor-details">
+                    <h2>Dr. Sufiyan Ahmed</h2>
+                    <p>MBBS, MD (Internal Medicine)</p>
+                    <p>Department of General Medicine</p>
+                </div>
+                <button class="history-btn" onclick="viewPatientHistory()">View Patient History</button>
+            </div>
+    
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">Observations</h3>
+                    <button class="mic-btn" id="obsmic">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <textarea class="observation-textarea" id="observations" placeholder="Enter or speak observations here..."></textarea>
+            </div>
+    
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">Prescriptions</h3>
+                    <button class="mic-btn" id="presmic">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <table class="prescription-table">
+                    <thead>
+                        <tr>
+                            <th>SI. No</th>
+                            <th>Drug Name</th>
+                            <th>Dosage (M-A-N)</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prescriptionBody">
+                        <tr>
+                            <td>1</td>
+                            <td contenteditable="true"></td>
+                            <td contenteditable="true"></td>
+                            <td contenteditable="true"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="add-row-btn" onclick="addPrescriptionRow()">Add Row</button>
+            </div>
+            <button class="save-btn" id="saveButton" onclick="handleSave()">
+                Save and Process
+            </button>
+        </div>
+    
+        <script>
+            function viewPatientHistory() {
+        window.location.href = 'pat-his.html';
+    }
+            // Voice recognition setup
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+    
+            let isRecording = false;
+            let currentContext = null;
+    
+            // Observation mic button
+            document.getElementById('obsmic').addEventListener('click', function() {
+                toggleRecording(this, 'observations');
+            });
+    
+            // Prescription mic button
+            document.getElementById('presmic').addEventListener('click', function() {
+                toggleRecording(this, 'prescriptions');
+            });
+    
+            function toggleRecording(button, context) {
+                if (isRecording && currentContext === context) {
+                    stopRecording(button);
+                } else {
+                    if (isRecording) {
+                        stopRecording(document.querySelector('.mic-btn.recording'));
+                    }
+                    startRecording(button, context);
+                }
+            }
+    
+            function startRecording(button, context) {
+                button.classList.add('recording');
+                isRecording = true;
+                currentContext = context;
+                recognition.start();
+            }
+    
+            function stopRecording(button) {
+                button.classList.remove('recording');
+                isRecording = false;
+                currentContext = null;
+                recognition.stop();
+            }
+    
+            recognition.onresult = function(event) {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+    
+                if (currentContext === 'observations') {
+                    document.getElementById('observations').value += transcript;
+                } else if (currentContext === 'prescriptions') {
+                    // Parse prescription voice input and add to table
+                    const lastRow = document.querySelector('#prescriptionBody tr:last-child');
+                    const cells = lastRow.querySelectorAll('td');
+                    cells[1].textContent += transcript;
+                }
+            };
+    
+            function addPrescriptionRow() {
+                const tbody = document.getElementById('prescriptionBody');
+                const rowCount = tbody.getElementsByTagName('tr').length;
+                const newRow = document.createElement('tr');
+                
+                newRow.innerHTML = `
+                    <td>${rowCount + 1}</td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true"></td>
+                `;
+                
+                tbody.appendChild(newRow);
+            }
+
+            // here
+
+            async function handleSave() {
+    const saveButton = document.getElementById('saveButton');
+    saveButton.classList.add('loading');
+    saveButton.textContent = 'Processing...';
+
+    try {
+        // Gather only prescription data
+        const prescriptionRows = Array.from(document.querySelectorAll('#prescriptionBody tr')).map(row => {
+            const cells = row.querySelectorAll('td');
+            return {
+                serialNo: cells[0].textContent,
+                drugName: cells[1].textContent,
+                dosage: cells[2].textContent,
+                duration: cells[3].textContent
+            };
+        });
+
+        // Create print content
+        const printDiv = document.createElement('div');
+        printDiv.style.display = 'none';
+        printDiv.innerHTML = `
+            <div style="padding: 20px; font-family: Arial, sans-serif;">
+                <h2 style="color: #1e3c72; margin-bottom: 10px;">Dr. Sarah Johnson</h2>
+                <p style="color: #666; margin: 5px 0;">MBBS, MD (Internal Medicine)</p>
+                <p style="color: #666; margin: 5px 0;">Department of General Medicine</p>
+                <p style="color: #666; margin: 5px 0;">Date: ${new Date().toLocaleDateString()}</p>
+                <hr style="margin: 20px 0; border: 1px solid #e0e0e0;">
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">SI. No</th>
+                            <th style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">Drug Name</th>
+                            <th style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">Dosage (M-A-N)</th>
+                            <th style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${prescriptionRows.map(p => `
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 8px;">${p.serialNo}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${p.drugName}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${p.dosage}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${p.duration}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 40px; text-align: right;">
+                    <p>Signature: _________________</p>
+                    <p style="margin-top: 5px;">Dr. Sarah Johnson</p>
+                </div>
+            </div>
+        `;
+
+        // Add print styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+                #printSection, #printSection * {
+                    visibility: visible;
+                }
+                #printSection {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+            }
+        `;
+        printDiv.appendChild(style);
+        
+        // Add to document
+        printDiv.id = 'printSection';
+        document.body.appendChild(printDiv);
+
+        // Trigger print
+        window.print();
+
+        // Remove print div after printing
+        document.body.removeChild(printDiv);
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while printing. Please try again.');
+    } finally {
+        saveButton.classList.remove('loading');
+        saveButton.textContent = 'Save and Process';
+    }
+}
+            // // View History button functionality
+            // document.querySelector('.history-btn').addEventListener('click', function() {
+            //     // Redirect to history page or show modal
+            //     window.location.href = '/patient-history';
+            // });
+        </script>
+    
+        <!-- Font Awesome for icons -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    </body>
+    </html>
